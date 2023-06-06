@@ -9,9 +9,7 @@ export const initApp=(app, express)=>{
     // buffering data
     app.use(express.json({}))
     // cors policy
-    app.use(cors({
-        origin:["http://localhost:3000","https://DEV-A7MED.github.io/Blogs-App-Front"]
-    }))
+    app.use(cors())
     // connect DB 
     connectionDB();
 

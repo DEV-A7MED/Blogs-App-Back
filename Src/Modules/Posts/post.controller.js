@@ -103,7 +103,7 @@ const getSinglePost=async(req,res,nxt)=>{
 const getPostCount=async(req,res,nxt)=>{
     const postsCount=await postModel.count()
     if(!postsCount)return nxt(new Error("fail to count posts",{cause:404}))
-    res.status(200).json({ message: 'Done', postsCount })
+    res.status(200).json({postsCount })
 
 }
 /**--------------------------------

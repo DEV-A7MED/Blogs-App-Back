@@ -88,7 +88,13 @@ const getAllPosts=async(req,res,nxt)=>{
 const getSinglePost=async(req,res,nxt)=>{
     const post=await postModel.findById(req.params.postId)
                 .populate("createdBy",["-password"])
-                .populate("comments")
+                .populate([
+                    { 
+                        path: 'comments',
+                        populate:"createdBy"
+                    },
+                    
+            ])
 
     if(!post)return nxt(new Error("in-valid post",{cause:404}))
     res.status(200).json({ message: 'Done', post })

@@ -8,7 +8,6 @@ const commentSchema = new Schema(
             required: [true, 'title is required'],
             
         },
-        
         createdBy:{
             type:Schema.Types.ObjectId,
             ref:"user",
@@ -19,6 +18,11 @@ const commentSchema = new Schema(
             ref:"post",
             required:true,
 
+        },
+        userName:{
+            type:String,
+            required: true,
+            
         },
     },
     {

@@ -90,8 +90,7 @@ const getSinglePost=async(req,res,nxt)=>{
                 .populate("createdBy",["-password"])
                 .populate([
                     { 
-                        path: 'comments',
-                        populate:"createdBy"
+                        path: 'comments'
                     },
                     
             ])
@@ -148,12 +147,12 @@ const deletePost=async(req,res,nxt)=>{
 const updatePost=async(req,res,nxt)=>{
     const{postId}=req.params;
     const{_id}=req.user;
-    const{title,description,category}=req.body
+    const{title,description,category}=req.body;
     // check if post exist inDB
     const post=await postModel.findById(postId);
-    if(!post)return nxt(new Error ("iv-valid post",{cause:404}))
+    if(!post)return nxt(new Error ("iv-valid post",{cause:404}));
     // check if user authorized to update post
-    if(post.createdBy.toString() !== _id.toString())return nxt(new Error ("Un-Authorized user to update post",{cause:403}))
+    if(post.createdBy.toString() !== _id.toString())return nxt(new Error ("Un-Authorized user to update post",{cause:403}));
     
     // update post with new values
     const updatedPost=await postModel.findByIdAndUpdate(postId,{

@@ -90,7 +90,8 @@ const getSinglePost=async(req,res,nxt)=>{
                 .populate("createdBy",["-password"])
                 .populate([
                     { 
-                        path: 'comments'
+                        path: 'comments',
+                        populate:"createdBy"
                     },
                     
             ])

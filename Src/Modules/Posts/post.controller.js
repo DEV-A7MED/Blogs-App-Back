@@ -91,7 +91,6 @@ const getSinglePost=async(req,res,nxt)=>{
                 .populate([
                     { 
                         path: 'comments',
-                        populate:"createdBy"
                     },
                     
             ])

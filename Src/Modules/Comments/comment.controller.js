@@ -83,7 +83,7 @@ const updateComment=async(req,res,nxt)=>{
     },
     {
         new:true
-    }).populate("createdBy",["-password"])
+    })
     updatedComment?res.status(200).json({ message: "Done", updatedComment }):nxt(new Error(' fail to update comment', { cause: 400 }))
     
 }

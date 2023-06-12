@@ -42,7 +42,10 @@ const updateUserProfile=async(req,res,nxt)=>{
             password:req.body.password,
             bio:req.body.bio
         }
-    },{new:true})
+    },
+    {new:true}
+    ).select("-password")
+    .populate("posts")
     updatedUser?res.status(200).json({message:"update done",updatedUser}):nxt(new Error("fail to update user ,try again",{cause:403}))
 }
 /**--------------------------------

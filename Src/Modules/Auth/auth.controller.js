@@ -85,7 +85,7 @@ const logIn=async(req,res,nxt)=>{
         const user=await userModel.findOne({email});
         if(!user) return nxt(new Error("in-valid email or password",{cause:409}));
         // generate new verification link
-        const token =generateToken({
+        const verifyToken =generateToken({
             payload:{
                 _id:user._id,
                 role:user.role,
@@ -97,7 +97,7 @@ const logIn=async(req,res,nxt)=>{
         {expiresIn:'1h'}
         )
         // verify link
-        const verifyLink=`${req.protocol}://${req.headers.host}/user/${user._id}/verify/${token}`;
+        const verifyLink=`${req.protocol}://${req.headers.host}/user/${user._id}/verify/${verifyToken}`;
         // verify email
         await sendEmail({
             to:user.email,

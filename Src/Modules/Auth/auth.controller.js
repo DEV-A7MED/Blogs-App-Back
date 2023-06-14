@@ -80,10 +80,10 @@ const logIn=async(req,res,nxt)=>{
     const {email,password}=req.body
     // ask user to verify email or signup first 
     const verifiedUser=await userModel.findOne({email,isConfirmed:true});
-    
-    if(!verifiedUser) {
-    const user=await userModel.findOne({email});
 
+    if(!verifiedUser) {
+        const user=await userModel.findOne({email});
+        if(!user) return nxt(new Error("in-valid email or password",{cause:409}));
         // generate new verification link
         const token =generateToken({
             payload:{

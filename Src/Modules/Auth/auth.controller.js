@@ -97,7 +97,7 @@ const logIn=async(req,res,nxt)=>{
         {expiresIn:'1h'}
         )
         // verify link
-        const verifyLink=`${req.protocol}://${req.headers.host}/user/${user._id}/verify/${verifyToken}`;
+        const verifyLink=`http://localhost:3000/user/${user._id}/verify/${verifyToken}`;
         // verify email
         await sendEmail({
             to:user.email,

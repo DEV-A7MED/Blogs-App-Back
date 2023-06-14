@@ -104,7 +104,7 @@ const logIn=async(req,res,nxt)=>{
             subject: "confirmation email",
             message: `<a href=${verifyLink}>Click to confirm</a>`
         })
-        return res.status(200).json({ message: "check your email and verify your account" });
+        return nxt(new Error("check your email and verify your account",{cause:409}))
     }
 
     // check user exist

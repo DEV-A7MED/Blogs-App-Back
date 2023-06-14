@@ -28,7 +28,7 @@ const signUp=async(req,res,nxt)=>{
     const user =newUser.save()
 //send verification email to user 
     // generate token
-    const token =generateToken({
+    const verifyToken =generateToken({
         payload:{
             _id:newUser._id,
             role:newUser.role,
@@ -40,7 +40,7 @@ const signUp=async(req,res,nxt)=>{
     {expiresIn:'1h'}
     )
     // verify link
-    const verifyLink=`${req.protocol}://${req.headers.host}/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${newUser._id}/verify/${verifyToken}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -59,8 +59,8 @@ const signUp=async(req,res,nxt)=>{
     * @access   Public
 -----------------------------------*/
 const verifyEmail=async(req,res,nxt)=>{
-    const{token}=req.params;
-    const decode = decodeToken({ payload: token });
+    const{verifyToken}=req.params;
+    const decode = decodeToken({ payload: verifyToken });
     if (!decode?._id) return nxt(new Error("in-valid token",{cause:400}))
    
     const verifiedUser=await userModel.findOneAndUpdate({_id:decode._id,isConfirmed:false},{isConfirmed:true})
@@ -97,7 +97,7 @@ const logIn=async(req,res,nxt)=>{
         {expiresIn:'1h'}
         )
         // verify link
-        const verifyLink=`http://localhost:3000/user/${user._id}/verify/${verifyToken}`;
+        const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${user._id}/verify/${verifyToken}`;
         // verify email
         await sendEmail({
             to:user.email,

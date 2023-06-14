@@ -8,6 +8,8 @@ const router =Router()
 
 // signUp router
 router.post("/signUp",validation(validators.signUpSchema),asyncHandler(authController.signUp))
+// verify account
+router.get("/:id/verify/:token",validation(validators.verifyAccountSchema),asyncHandler(authController.verifyEmail))
 //LOGIN ROUTER
 router.post("/logIn",validation(validators.logInSchema),asyncHandler(authController.logIn))
 

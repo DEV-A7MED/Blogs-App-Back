@@ -6,6 +6,9 @@ export const signUpSchema=joi.object({
     password:generalFields.password,
     cpass:generalFields.cPassword
 }).required()
+export const verifyAccountSchema=joi.object({
+    id:generalFields.id,
+}).required()
 export const logInSchema=joi.object({
     email:generalFields.email,
     password:generalFields.password

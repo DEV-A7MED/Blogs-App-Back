@@ -19,7 +19,7 @@ const createCategory=async(req,res,nxt)=>{
         createdBy:req.user._id,
     })
     
-    category?res.status(201).json({message:"category created",category}):nxt(new Error("fail to add category ,try again"))
+    category?res.status(201).json({message:"category created successfully",category}):nxt(new Error("fail to add category ,try again"))
 
 
 }

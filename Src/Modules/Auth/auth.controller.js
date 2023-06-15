@@ -25,31 +25,29 @@ const signUp=async(req,res,nxt)=>{
     const newUser=new userModel({
         userName,email,password:hashedPassword,customId
     })
-    const user =newUser.save()
 //send verification email to user 
     // generate token
-    const verifyToken =generateToken({
+    const token =generateToken({
         payload:{
-            _id:newUser._id,
-            role:newUser.role,
-            userName:newUser.userName,
-            profilePhoto:newUser.profilePhoto
+            userId:newUser._id,
+        },
+        expiresIn:'1h'
+    }
+    );
 
-        }
-    },
-    {expiresIn:'1h'}
-    )
     // verify link
-    const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${newUser._id}/verify/${verifyToken}`;
+    const verifyLink=`http://localhost:3000/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
         subject: "confirmation email",
         message: `<a href=${verifyLink}>Click to confirm</a>`
-    })
-    if(!verifyEmail)return nxt (new Error("fail to send email"))
+    });
+    if(!verifyEmail)return nxt (new Error("fail to send email"));
+
+    const user =await newUser.save();
     // User Response
-    user?res.status(201).json({message:"Registeration done,please verify your account",newUser}): nxt (new Error("fail to added user"),{cause:403});
+    user?res.status(201).json({message:"Registeration done,please verify your account"}): nxt (new Error("fail to added user"),{cause:403});
 
 }
 /**--------------------------------
@@ -59,14 +57,14 @@ const signUp=async(req,res,nxt)=>{
     * @access   Public
 -----------------------------------*/
 const verifyEmail=async(req,res,nxt)=>{
-    const{verifyToken}=req.params;
-    const decode = decodeToken({ payload: verifyToken });
-    if (!decode?._id) return nxt(new Error("in-valid token",{cause:400}))
+    const{token}=req.params;
+    const decode = decodeToken({ payload: token });
+    if (!decode?.userId) return nxt(new Error("in-valid token",{cause:400}))
 
-    const verifiedUser=await userModel.findOne({_id:decode._id,isConfirmed:false})
-    if(!verifiedUser) return nxt(new Error("You Are Already Confirmed",{cause:400}))
-    verifiedUser.isConfirmed=true;
-    await verifiedUser.save();
+    const user=await userModel.findOne({_id:decode.userId,isConfirmed:false})
+    if(!user) return nxt(new Error("You Are Already Confirmed",{cause:400}))
+    user.isConfirmed=true;
+    await user.save();
     
     return res.status(200).json({ message: "Confirmation success , please try to login" });
     
@@ -87,19 +85,15 @@ const logIn=async(req,res,nxt)=>{
         const user=await userModel.findOne({email});
         if(!user) return nxt(new Error("in-valid email or password",{cause:409}));
         // generate new verification link
-        const verifyToken =generateToken({
+        const token =generateToken({
             payload:{
-                _id:user._id,
-                role:user.role,
-                userName:user.userName,
-                profilePhoto:user.profilePhoto
-    
-            }
-        },
-        {expiresIn:'1h'}
+                userId:user._id,
+            },
+            expiresIn:'1h'
+        }
         )
         // verify link
-        const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${user._id}/verify/${verifyToken}`;
+        const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${user._id}/verify/${token}`;
         // verify email
         await sendEmail({
             to:user.email,
@@ -108,7 +102,6 @@ const logIn=async(req,res,nxt)=>{
         })
         return nxt(new Error("check your email and verify your account",{cause:409}))
     }
-
     // check user exist
     const existUser=await userModel.findOne({email});
     if(!existUser) return nxt(new Error("in-valid email or password",{cause:409}));

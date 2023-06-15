@@ -36,7 +36,7 @@ const signUp=async(req,res,nxt)=>{
     );
 
     // verify link
-    const verifyLink=`http://localhost:3000/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -57,11 +57,11 @@ const signUp=async(req,res,nxt)=>{
     * @access   Public
 -----------------------------------*/
 const verifyEmail=async(req,res,nxt)=>{
-    const{token}=req.params;
+    const{userId,token}=req.params;
+
     const decode = decodeToken({ payload: token });
     if (!decode?.userId) return nxt(new Error("in-valid token",{cause:400}))
-
-    const user=await userModel.findOne({_id:decode.userId,isConfirmed:false})
+    const user=await userModel.findOne({_id:userId,isConfirmed:false})
     if(!user) return nxt(new Error("You Are Already Confirmed",{cause:400}))
     user.isConfirmed=true;
     await user.save();
@@ -100,7 +100,7 @@ const logIn=async(req,res,nxt)=>{
             subject: "confirmation email",
             message: `<a href=${verifyLink}>Click to confirm</a>`
         })
-        return nxt(new Error("check your email and verify your account",{cause:409}))
+        return nxt(new Error("check your email and verify your account",{cause:400}))
     }
     // check user exist
     const existUser=await userModel.findOne({email});

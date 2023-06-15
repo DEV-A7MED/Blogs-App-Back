@@ -62,9 +62,11 @@ const verifyEmail=async(req,res,nxt)=>{
     const{verifyToken}=req.params;
     const decode = decodeToken({ payload: verifyToken });
     if (!decode?._id) return nxt(new Error("in-valid token",{cause:400}))
-   
-    const verifiedUser=await userModel.findOneAndUpdate({_id:decode._id,isConfirmed:false},{isConfirmed:true})
+
+    const verifiedUser=await userModel.findOne({_id:decode._id,isConfirmed:false})
     if(!verifiedUser) return nxt(new Error("You Are Already Confirmed",{cause:400}))
+    verifiedUser.isConfirmed=true;
+    await verifiedUser.save();
     
     return res.status(200).json({ message: "Confirmation success , please try to login" });
     

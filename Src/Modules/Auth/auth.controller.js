@@ -36,7 +36,7 @@ const signUp=async(req,res,nxt)=>{
     );
 
     // verify link
-    const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`http://localhost:3000/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -66,7 +66,7 @@ const verifyEmail=async(req,res,nxt)=>{
     user.isConfirmed=true;
     await user.save();
     
-    return res.status(200).json({ message: "Confirmation success , please try to login" });
+    res.status(200).json({ message: "Confirmation success , please try to login" });
     
 }
 /**--------------------------------
@@ -93,7 +93,7 @@ const logIn=async(req,res,nxt)=>{
         }
         )
         // verify link
-        const verifyLink=`http://localhost:3000/Blogs-App-Front#/user/${user._id}/verify/${token}`;
+        const verifyLink=`http://localhost:3000/user/${user._id}/verify/${token}`;
         // verify email
         await sendEmail({
             to:user.email,

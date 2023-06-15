@@ -36,7 +36,7 @@ const signUp=async(req,res,nxt)=>{
     );
 
     // verify link
-    const verifyLink=`http://localhost:3000/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`https://dev-a7med.github.io/Blogs-App-Front/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -61,8 +61,8 @@ const verifyEmail=async(req,res,nxt)=>{
 
     const decode = decodeToken({ payload: token });
     if (!decode?.userId) return nxt(new Error("in-valid token",{cause:400}))
-    const user=await userModel.findOne({_id:userId,isConfirmed:false})
-    if(!user) return nxt(new Error("You Are Already Confirmed",{cause:400}))
+    const user=await userModel.findById({_id:userId})
+    if(!user) return nxt(new Error("in-valid-user",{cause:400}))
     user.isConfirmed=true;
     await user.save();
     
@@ -93,7 +93,9 @@ const logIn=async(req,res,nxt)=>{
         }
         )
         // verify link
-        const verifyLink=`http://localhost:3000/user/${user._id}/verify/${token}`;
+        const verifyLink=`https://dev-a7med.github.io/Blogs-App-Front/user/${user._id}/verify/${token}`;
+        
+
         // verify email
         await sendEmail({
             to:user.email,

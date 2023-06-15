@@ -8,6 +8,7 @@ export const signUpSchema=joi.object({
 }).required()
 export const verifyAccountSchema=joi.object({
     userId:generalFields.id,
+    token:joi.string().required(),
 }).required()
 export const logInSchema=joi.object({
     email:generalFields.email,

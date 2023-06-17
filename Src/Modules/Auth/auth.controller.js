@@ -36,7 +36,7 @@ const signUp=async(req,res,nxt)=>{
     );
 
     // verify link
-    const verifyLink=`https://dev-a7med.github.io/Blogs-App-Front/#/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`${process.env.CLIENT_DOMAIN}/Blogs-App-Front/#/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -93,7 +93,7 @@ const logIn=async(req,res,nxt)=>{
         }
         )
         // verify link
-        const verifyLink=`https://dev-a7med.github.io/Blogs-App-Front/#/user/${user._id}/verify/${token}`;
+        const verifyLink=`${process.env.CLIENT_DOMAIN}/verify/${token}`;
         
 
         // verify email
@@ -133,8 +133,74 @@ const logIn=async(req,res,nxt)=>{
                         })
 
 }
+/**--------------------------------
+    * @desc     SEND forget password link
+    * @route    /api/auth/reset-password
+    * @method   POST
+    * @access   Public
+-----------------------------------*/
+const sendResetPassLink= async(req,res,nxt)=>{
+    const user= await userModel.findOne({email:req.body.email,isConfirmed:true});
+    if(!user)return nxt(new Error("in-valid user",{cause:404}));
+    // generate token
+    const token =generateToken({
+        payload:{
+            userId:user._id,
+        },
+        expiresIn:'1h'
+    }
+    );
+
+    // reset pass link
+    const link=`${process.env.CLIENT_DOMAIN}/reset-password/${user._id}/${token}`;
+    // reset pass email
+    const forgetPassEmail=await sendEmail({
+        to: user.email,
+        subject: "Reset password link email",
+        message: `<a href=${link}>Click to reset your password</a>`
+    });
+    if(!forgetPassEmail)return nxt (new Error("fail to send email"));
+    res.status(200).json({message:"Password reset link sent to your email,"})
+}
+/**--------------------------------
+    * @desc     Get reset password link
+    * @route    /api/auth/reset-password/:userId/:token
+    * @method   GET
+    * @access   Public
+-----------------------------------*/
+const getResetPassLink=async(req,res,nxt)=>{
+    const{userId,token}=req.params;
+    const decode = decodeToken({ payload: token });
+    if (!decode?.userId) return nxt(new Error("in-valid token",{cause:400}))
+    const user=await userModel.findById(userId)
+    if(!user) return nxt(new Error("in-valid-user",{cause:400}))
+    res.status(200).json({message:"valid url"})
+}
+/**--------------------------------
+    * @desc     Reset password link
+    * @route    /api/auth/reset-password/:userId/:token
+    * @method   PUT
+    * @access   Public
+-----------------------------------*/
+const resetPass=async(req,res,nxt)=>{
+    const{userId,token}=req.params;
+    const decode = decodeToken({ payload: token });
+    if (!decode?.userId) return nxt(new Error("in-valid token",{cause:400}));
+    const user= await userModel.findById(userId);
+    if(!user) return nxt(new Error ("in-valid user"));
+    const hashedPass=bcrypt.hashSync(req.body.password,+process.env.SALT_ROUND);
+    const updatedUser=await userModel.findByIdAndUpdate(user._id,{
+        password:hashedPass
+    },{
+        new:true
+    })
+    updatedUser?res.status(200).json({message:"password has been reset successfully, try to login"}):nxt(new Error("fail to update password ,please try again",{cause:400}))
+}
 export{
     signUp,
     logIn,
-    verifyEmail
+    verifyEmail,
+    sendResetPassLink,
+    getResetPassLink,
+    resetPass
 }

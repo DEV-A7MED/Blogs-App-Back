@@ -157,7 +157,7 @@ const sendResetPassLink= async(req,res,nxt)=>{
     const forgetPassEmail=await sendEmail({
         to: user.email,
         subject: "Reset password link email",
-        message: `<a href=${link}>Click to reset your password</a>`
+        message: `<a href=${link}> Click to reset your password </a>`
     });
     if(!forgetPassEmail)return nxt (new Error("fail to send email"));
     res.status(200).json({message:"Password reset link sent to your email,"})

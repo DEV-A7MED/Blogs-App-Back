@@ -107,7 +107,7 @@ const getSinglePost=async(req,res,nxt)=>{
 -----------------------------------*/
 const getPostCount=async(req,res,nxt)=>{
     const postsCount=await postModel.count()
-    if(!postsCount)return nxt(new Error("fail to count posts",{cause:404}))
+    // if(!postsCount)return nxt(new Error("fail to count posts",{cause:404}))
     res.status(200).json({postsCount })
 
 }
@@ -161,7 +161,9 @@ const updatePost=async(req,res,nxt)=>{
             description,
             category
         }
-    },{new:true}).populate("createdBy",["-password"])
+    },{new:true})
+    .populate("createdBy",["-password"])
+
     updatedPost?res.status(200).json({ message: "Done", updatedPost }):nxt(new Error(' fail to update post', { cause: 400 }))
     
 }

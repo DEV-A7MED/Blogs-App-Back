@@ -10,12 +10,12 @@ import commentModel from "../../../DB/models/CommentModel.js"
 -----------------------------------*/ 
 const createCategory=async(req,res,nxt)=>{
 
-    const categoryExist=await categoryModel.findOne({title:req.body.title})
+    const categoryExist=await categoryModel.findOne({title:req.body.title.toLowerCase()})
     if(categoryExist) return nxt(new Error(`Category ${req.body.title} is already exist , choose another category name`))
 
     // create comment and save in DB
     const category=await categoryModel.create({
-        title:req.body.title,
+        title:req.body.title.toLowerCase(),
         createdBy:req.user._id,
     })
     

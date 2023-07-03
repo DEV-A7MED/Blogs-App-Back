@@ -36,7 +36,7 @@ const signUp=async(req,res,nxt)=>{
     );
 
     // verify link
-    const verifyLink=`${process.env.CLIENT_DOMAIN}/Blogs-App-Front/#/user/${newUser._id}/verify/${token}`;
+    const verifyLink=`${process.env.CLIENT_DOMAIN}/user/${newUser._id}/verify/${token}`;
     // verify email
     const verifyEmail=await sendEmail({
         to: email,
@@ -93,7 +93,7 @@ const logIn=async(req,res,nxt)=>{
         }
         )
         // verify link
-        const verifyLink=`${process.env.CLIENT_DOMAIN}/verify/${token}`;
+        const verifyLink=`${process.env.CLIENT_DOMAIN}/user/${user._id}verify/${token}`;
         
 
         // verify email

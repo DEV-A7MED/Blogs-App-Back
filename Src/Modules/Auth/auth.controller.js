@@ -93,7 +93,7 @@ const logIn=async(req,res,nxt)=>{
         }
         )
         // verify link
-        const verifyLink=`${process.env.CLIENT_DOMAIN}/user/${user._id}verify/${token}`;
+        const verifyLink=`${process.env.CLIENT_DOMAIN}/user/${user._id}/verify/${token}`;
         
 
         // verify email
